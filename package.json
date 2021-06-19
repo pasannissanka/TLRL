@@ -1,0 +1,11 @@
+{
+  "name": "tlrl",
+  "version": "0.0.0",
+  "description": "Too Long; Read Later - Bookmark management",
+  "author": "Pasan Nissanka",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+     "packages/*"
+  ]
+}
