@@ -5,6 +5,7 @@ import { Op } from 'sequelize';
 import { AppError } from '../../helpers/errors/app_error';
 import { successResponse } from '../../helpers/response/success_response';
 import User from '../../models/user/user';
+import { TokenPayload } from '../../types/types';
 
 class AuthenticationController {
   /**
@@ -24,7 +25,7 @@ class AuthenticationController {
     });
 
     const accessToken = jwt.sign(
-      { user_id: user.userId, email: user.email },
+      { user_id: user.userId, email: user.email } as TokenPayload,
       'key',
       {
         expiresIn: '7d',
@@ -41,7 +42,6 @@ class AuthenticationController {
    * loginUser
   req: Request, res: Response   */
   public async loginUser(req: Request, res: Response) {
-    console.log(req.body);
     const emailOrUsername = req.body.userName
       ? req.body.userName
       : req.body.email;
@@ -63,7 +63,7 @@ class AuthenticationController {
     }
 
     const accessToken = jwt.sign(
-      { user_id: user!.userId, email: user!.email },
+      { user_id: user!.userId, email: user!.email } as TokenPayload,
       'key',
       {
         expiresIn: '7d',
@@ -80,7 +80,9 @@ class AuthenticationController {
    * getUser
   req: Request, res: Response   */
   public async getUser(req: Request, res: Response) {
-    res.status(200).send('NOT IMPLEMENTED1');
+    successResponse(res, {
+      user: req.user,
+    });
   }
 }
 

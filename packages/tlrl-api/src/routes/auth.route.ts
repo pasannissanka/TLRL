@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import AuthenticationController from '../controllers/auth/authentication';
+import { AuthenticationMiddleware } from '../helpers/auth/authentication.middleware';
 import { catchAsync } from '../helpers/errors/catch_async';
 import { catchValidationErrors } from '../helpers/errors/catch_validation_errors';
 
@@ -30,6 +31,9 @@ router.post('/login', [
   catchAsync(AuthenticationController.loginUser),
 ]);
 
-router.post('/user', [AuthenticationController.getUser]);
+router.get('/user', [
+  AuthenticationMiddleware,
+  AuthenticationController.getUser,
+]);
 
 export default router;

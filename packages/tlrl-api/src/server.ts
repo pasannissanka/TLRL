@@ -24,7 +24,7 @@ const main = async () => {
   }
 
   // Sync force/alter on development only, @todo: use migrations
-  sequelize.sync({ force: true, match: /_dev$/ });
+  sequelize.sync({ force: false, match: /_dev$/ });
 
   app.get('/', (_, res) => {
     res.send('Hi');
