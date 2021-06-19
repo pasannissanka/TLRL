@@ -2,6 +2,8 @@ import { hash, verify } from 'argon2';
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
+import { AppError } from '../../helpers/errors/app_error';
+import { successResponse } from '../../helpers/response/success_response';
 import User from '../../models/user/user';
 
 class AuthenticationController {
@@ -9,7 +11,7 @@ class AuthenticationController {
    * registerUser
   req: Requset, res: Response   */
   public async registerUser(req: Request, res: Response) {
-    const hasedPassword = await hash(req.body.password);
+    const hashedPassword = await hash(req.body.password);
 
     let user: User;
 
@@ -18,7 +20,7 @@ class AuthenticationController {
       userName: req.body.userName,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      password: hasedPassword,
+      password: hashedPassword,
     });
 
     const accessToken = jwt.sign(
@@ -29,8 +31,7 @@ class AuthenticationController {
       }
     );
 
-    res.status(200).send({
-      message: 'Successful',
+    successResponse(res, {
       userId: user.userId,
       token: accessToken,
     });
@@ -52,13 +53,13 @@ class AuthenticationController {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError('Invalid username or password', 404);
     }
 
-    const isValid = verify(user!.password, req.body.password);
+    const isValid = await verify(user!.password, req.body.password);
 
     if (!isValid) {
-      throw new Error('Invalid Password');
+      throw new AppError('Invalid username or password', 404);
     }
 
     const accessToken = jwt.sign(
@@ -69,9 +70,8 @@ class AuthenticationController {
       }
     );
 
-    res.status(200).send({
-      message: 'Successful',
-      userId: user!.userId,
+    successResponse(res, {
+      userId: user.userId,
       token: accessToken,
     });
   }
