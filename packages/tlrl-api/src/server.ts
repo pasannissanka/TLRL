@@ -4,6 +4,7 @@ import { errorHandler } from './helpers/errors/error_handler';
 import authRoute from './routes/auth.route';
 import bookmarkRoute from './routes/bookmark.route';
 import tagRoute from './routes/tag.route';
+import categoryRoute from './routes/category.route';
 import { sequelize } from './sequelize';
 
 const main = async () => {
@@ -36,6 +37,7 @@ const main = async () => {
   app.use('/auth', authRoute);
   app.use('/bookmark', bookmarkRoute);
   app.use('/tag', tagRoute);
+  app.use('/category', categoryRoute);
 
   // Catch All Unhandled routes
   app.all('*', (req, _, next) => {

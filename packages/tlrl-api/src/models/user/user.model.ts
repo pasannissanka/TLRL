@@ -6,11 +6,13 @@ import {
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyHasAssociationMixin,
+  HasManyRemoveAssociationMixin,
   Model,
   Optional,
 } from 'sequelize';
 import { sequelize } from '../../sequelize';
 import Bookmark from '../bookmark/bookmark.model';
+import Category from '../category/category.model';
 import { Tag } from '../tag/tag.model';
 
 interface UserAttributes {
@@ -55,6 +57,13 @@ class User
   public hasTag!: HasManyHasAssociationMixin<Tag, any>;
   public countTags!: HasManyCountAssociationsMixin;
   public createTag!: HasManyCreateAssociationMixin<Tag>;
+
+  public getCategory!: HasManyGetAssociationsMixin<Category>;
+  public addCategory!: HasManyAddAssociationMixin<Category, number>;
+  public hasCategory!: HasManyHasAssociationMixin<Category, any>;
+  public createCategory!: HasManyCreateAssociationMixin<Category>;
+  public countCategories!: HasManyCountAssociationsMixin;
+  public removeCategory!: HasManyRemoveAssociationMixin<Category, any>;
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
@@ -122,6 +131,17 @@ User.hasMany(Tag, {
 });
 
 Tag.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'User',
+});
+
+User.hasMany(Category, {
+  sourceKey: 'userId',
+  foreignKey: 'userId',
+  as: 'Category',
+});
+
+Category.belongsTo(User, {
   foreignKey: 'userId',
   as: 'User',
 });
