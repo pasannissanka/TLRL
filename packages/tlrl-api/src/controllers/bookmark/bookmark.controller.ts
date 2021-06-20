@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { AppError } from '../../helpers/errors/app_error';
 import { successResponse } from '../../helpers/response/success_response';
-import User from '../../models/user/user';
+import { Tag } from '../../models/tag/tag.model';
+import User from '../../models/user/user.model';
 
 class BookmarkController {
   /**
@@ -21,8 +22,22 @@ class BookmarkController {
       isRead: false,
     });
 
+    let tag: Tag;
+    const userTags = await user.getTags({ where: { tag: req.body.tag } });
+
+    if (!userTags || userTags.length === 0) {
+      tag = await bookmark.createTag({
+        tag: req.body.tag,
+        userId: user.userId,
+      });
+    } else {
+      bookmark.addTag(userTags[0]);
+      tag = userTags[0];
+    }
+
     successResponse(res, {
       bookmark,
+      tag,
     });
   }
 
@@ -51,7 +66,7 @@ class BookmarkController {
    */
   public async getAllBookmarks(req: Request, res: Response) {
     const user = req.user as User;
-    const bookmarks = await user.getBookmarks();
+    const bookmarks = await user.getBookmarks({ include: Tag });
 
     successResponse(res, {
       bookmarks,

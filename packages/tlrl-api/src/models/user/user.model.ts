@@ -10,7 +10,8 @@ import {
   Optional,
 } from 'sequelize';
 import { sequelize } from '../../sequelize';
-import Bookmark from '../bookmark/bookmark';
+import Bookmark from '../bookmark/bookmark.model';
+import { Tag } from '../tag/tag.model';
 
 interface UserAttributes {
   userId: string;
@@ -49,12 +50,20 @@ class User
   public countBookmarks!: HasManyCountAssociationsMixin;
   public createBookmark!: HasManyCreateAssociationMixin<Bookmark>;
 
+  public getTags!: HasManyGetAssociationsMixin<Tag>; // Note the null assertions!
+  public addTag!: HasManyAddAssociationMixin<Tag, number>;
+  public hasTag!: HasManyHasAssociationMixin<Tag, any>;
+  public countTags!: HasManyCountAssociationsMixin;
+  public createTag!: HasManyCreateAssociationMixin<Tag>;
+
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
   public readonly Bookmarks?: Bookmark[]; // Note this is optional since it's only populated when explicitly requested in code
+  public readonly Tags?: Tag[]; // Note this is optional since it's only populated when explicitly requested in code
 
   public static associations: {
     Bookmarks: Association<User, Bookmark>;
+    Tags: Association<User, Tag>;
   };
 }
 
@@ -99,6 +108,22 @@ User.hasMany(Bookmark, {
   sourceKey: 'userId',
   foreignKey: 'userId',
   as: 'Bookmarks',
+});
+
+Bookmark.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'User',
+});
+
+User.hasMany(Tag, {
+  sourceKey: 'userId',
+  foreignKey: 'userId',
+  as: 'Tags',
+});
+
+Tag.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'User',
 });
 
 export default User;

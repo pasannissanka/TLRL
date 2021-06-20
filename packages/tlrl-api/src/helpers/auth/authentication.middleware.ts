@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import User from '../../models/user/user';
+import User from '../../models/user/user.model';
 import { TokenPayload } from '../../types/types';
 import { AppError } from '../errors/app_error';
 

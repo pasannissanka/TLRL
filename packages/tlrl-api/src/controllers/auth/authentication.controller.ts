@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { AppError } from '../../helpers/errors/app_error';
 import { successResponse } from '../../helpers/response/success_response';
-import User from '../../models/user/user';
+import User from '../../models/user/user.model';
 import { TokenPayload } from '../../types/types';
 
 class AuthenticationController {
