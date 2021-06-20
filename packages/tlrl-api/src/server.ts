@@ -1,8 +1,9 @@
 import express from 'express';
-import { sequelize } from './sequelize';
-import authRoute from './routes/auth.route';
 import { AppError } from './helpers/errors/app_error';
 import { errorHandler } from './helpers/errors/error_handler';
+import authRoute from './routes/auth.route';
+import bookmarkRoute from './routes/bookmark.route';
+import { sequelize } from './sequelize';
 
 const main = async () => {
   const app = express();
@@ -24,7 +25,7 @@ const main = async () => {
   }
 
   // Sync force/alter on development only, @todo: use migrations
-  sequelize.sync({ force: false, match: /_dev$/ });
+  sequelize.sync({ alter: true, match: /_dev$/ });
 
   app.get('/', (_, res) => {
     res.send('Hi');
@@ -32,6 +33,7 @@ const main = async () => {
 
   // Routes
   app.use('/auth', authRoute);
+  app.use('/bookmark', bookmarkRoute);
 
   // Catch All Unhandled routes
   app.all('*', (req, _, next) => {

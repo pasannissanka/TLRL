@@ -1,5 +1,16 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import {
+  Association,
+  DataTypes,
+  HasManyAddAssociationMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  Model,
+  Optional,
+} from 'sequelize';
 import { sequelize } from '../../sequelize';
+import Bookmark from '../bookmark/bookmark';
 
 interface UserAttributes {
   userId: string;
@@ -29,6 +40,22 @@ class User
   public readonly updatedAt!: Date;
 
   // https://sequelize.org/master/manual/typescript.html
+  // Since TS cannot determine model association at compile time
+  // we have to declare them here purely virtually
+  // these will not exist until `Model.init` was called.
+  public getBookmarks!: HasManyGetAssociationsMixin<Bookmark>; // Note the null assertions!
+  public addBookmark!: HasManyAddAssociationMixin<Bookmark, number>;
+  public hasBookmark!: HasManyHasAssociationMixin<Bookmark, number>;
+  public countBookmarks!: HasManyCountAssociationsMixin;
+  public createBookmark!: HasManyCreateAssociationMixin<Bookmark>;
+
+  // You can also pre-declare possible inclusions, these will only be populated if you
+  // actively include a relation.
+  public readonly Bookmarks?: Bookmark[]; // Note this is optional since it's only populated when explicitly requested in code
+
+  public static associations: {
+    Bookmarks: Association<User, Bookmark>;
+  };
 }
 
 User.init(
@@ -64,7 +91,14 @@ User.init(
   },
   {
     sequelize,
+    tableName: 'Users',
   }
 );
+
+User.hasMany(Bookmark, {
+  sourceKey: 'userId',
+  foreignKey: 'userId',
+  as: 'Bookmarks',
+});
 
 export default User;

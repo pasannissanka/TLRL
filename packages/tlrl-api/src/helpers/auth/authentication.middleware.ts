@@ -16,20 +16,21 @@ export async function AuthenticationMiddleware(
     next(new AppError('Unauthorized', 401));
   }
 
-  const decoded = verify(token!, 'key') as TokenPayload;
+  let decoded: TokenPayload;
 
-  const user = await User.findOne({ where: { userId: decoded.user_id } });
+  try {
+    decoded = verify(token!, 'key') as TokenPayload;
+  } catch (error) {
+    next(new AppError('Authentication Error', 401));
+  }
+
+  const user = await User.findOne({ where: { userId: decoded!.user_id } });
 
   if (!user) {
     next(new AppError('Authentication Error', 401));
   }
 
-  req.user = {
-    userId: user?.userId,
-    userName: user?.userName,
-    email: user?.email,
-    name: `${user?.firstName} ${user?.lastName}`,
-  };
+  req.user = user!;
 
   next();
 }

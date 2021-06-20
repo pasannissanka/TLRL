@@ -80,8 +80,14 @@ class AuthenticationController {
    * getUser
   req: Request, res: Response   */
   public async getUser(req: Request, res: Response) {
+    const user = req.user as User;
     successResponse(res, {
-      user: req.user,
+      user: {
+        userId: user.userId,
+        userName: user.userName,
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+      },
     });
   }
 }
