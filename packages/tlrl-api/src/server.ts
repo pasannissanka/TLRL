@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { AppError } from './helpers/errors/app_error';
 import { errorHandler } from './helpers/errors/error_handler';
 import authRoute from './routes/auth.route';
@@ -10,6 +11,11 @@ import { sequelize } from './sequelize';
 const main = async () => {
   const app = express();
 
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+    })
+  );
   // parse application/x-www-form-urlencoded
   app.use(express.urlencoded({ extended: false }));
   // parse application/json
@@ -47,8 +53,8 @@ const main = async () => {
   // Error Handling
   app.use(errorHandler);
 
-  app.listen(3000, () => {
-    console.log('TL;RL Server started at http://localhost:3000');
+  app.listen(4000, () => {
+    console.log('TL;RL Server started at http://localhost:4000');
   });
 };
 
