@@ -1,6 +1,7 @@
 import { Menu } from '@headlessui/react';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
 
 interface AppBarProps {
   isDrawerOpen: boolean;
@@ -8,13 +9,22 @@ interface AppBarProps {
 }
 
 export const AppBar = ({ handleDrawerOpen, isDrawerOpen }: AppBarProps) => {
+  const { loggedUser } = useAuthContext();
+  const history = useHistory();
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    history.push('/');
+  };
+
   return (
     <React.Fragment>
       <header className="flex-shrink-0 border-b bg-gray-100">
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center space-x-3">
             <span className="p-2 text-xl font-semibold tracking-wider uppercase lg:hidden">
-              SolvedCard
+              TL;RL
             </span>
             <button
               onClick={handleDrawerOpen}
@@ -158,13 +168,15 @@ export const AppBar = ({ handleDrawerOpen, isDrawerOpen }: AppBarProps) => {
                     as="div"
                     className="flex flex-col p-4 space-y-1 font-medium border-b"
                   >
-                    <span className="text-gray-800">
-                      {/* {me?.me.user.firstName} {me?.me.user.lastName} */}
+                    <span className="text-center text-gray-800">
+                      {loggedUser.name}
                     </span>
-                    {/* <span className="text-sm text-gray-300">{me?.me.user.username}</span> */}
-                    <span className="text-sm text-gray-400">
-                      {/* {me?.me.user.email} */}
+                    {/* <span className="text-center text-sm text-gray-300">
+                      {loggedUser.userName}
                     </span>
+                    <span className="text-center text-sm text-gray-400">
+                      {loggedUser.email}
+                    </span> */}
                   </Menu.Item>
 
                   <Menu.Item
@@ -184,6 +196,7 @@ export const AppBar = ({ handleDrawerOpen, isDrawerOpen }: AppBarProps) => {
                   <Menu.Item
                     as="button"
                     className="flex items-start w-full px-4 py-2 pb-4 transition rounded-md hover:bg-gray-100 border-t"
+                    onClick={logout}
                   >
                     Logout
                   </Menu.Item>

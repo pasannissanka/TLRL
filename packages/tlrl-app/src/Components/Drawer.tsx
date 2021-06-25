@@ -1,12 +1,18 @@
 import React from 'react';
+import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
+import { getCategories, getTags } from '../Query/api';
+import { Disclosure } from '@headlessui/react';
+import { Category, Tag } from '../types/types';
 
 interface DrawerProps {
   isDrawerOpen: boolean;
-  handleDrawerOpen: () => void;
 }
 
-export const Drawer = ({ isDrawerOpen, handleDrawerOpen }: DrawerProps) => {
+export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
+  const tags = useQuery('tagsAll', getTags);
+  const categories = useQuery('categoriesAll', getCategories);
+
   return (
     <React.Fragment>
       <aside
@@ -20,7 +26,7 @@ export const Drawer = ({ isDrawerOpen, handleDrawerOpen }: DrawerProps) => {
           }`}
         >
           <span className="p-2 text-xl font-semibold leading-8 tracking-wider uppercase whitespace-nowrap">
-            SolvedCard
+            TL;RL
           </span>
         </div>
         <nav className="flex-1 overflow-hidden hover:overflow-y-auto">
@@ -55,15 +61,15 @@ export const Drawer = ({ isDrawerOpen, handleDrawerOpen }: DrawerProps) => {
             </li>
             <li>
               <RouterLink
-                to="/users"
+                to="/timeline"
                 className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
                   isDrawerOpen ? 'justify-center' : ''
                 }`}
               >
                 <span>
                   <svg
-                    className="w-6 h-6 text-gray-400"
                     xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -71,19 +77,19 @@ export const Drawer = ({ isDrawerOpen, handleDrawerOpen }: DrawerProps) => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
                     />
-                  </svg>
+                  </svg>{' '}
                 </span>
                 <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
-                  Users
+                  Timeline
                 </span>
               </RouterLink>
             </li>
             <li>
               <RouterLink
-                to="/posts"
+                to="/readlist"
                 className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
                   isDrawerOpen ? 'justify-center' : ''
                 }`}
@@ -105,37 +111,143 @@ export const Drawer = ({ isDrawerOpen, handleDrawerOpen }: DrawerProps) => {
                   </svg>
                 </span>
                 <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
-                  Posts
+                  Read List
                 </span>
               </RouterLink>
             </li>
             <li>
-              <RouterLink
-                to="/activities"
-                className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
-                  isDrawerOpen ? 'justify-center' : ''
-                }`}
-              >
-                <span>
-                  <svg
-                    className="w-6 h-6 text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </span>
-                <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
-                  Activities
-                </span>
-              </RouterLink>
+              <Disclosure>
+                <Disclosure.Button
+                  className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 w-full ${
+                    isDrawerOpen ? 'justify-center' : ''
+                  }`}
+                >
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                      />
+                    </svg>
+                  </span>
+                  <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
+                    Categories
+                  </span>
+                </Disclosure.Button>
+                <Disclosure.Panel className="text-gray-500 pl-5">
+                  <ul>
+                    {categories.data?.map((category: Category) => {
+                      return (
+                        <li key={category.categoryId}>
+                          <RouterLink
+                            to={`/category/${category.categoryId}`}
+                            className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
+                              isDrawerOpen ? 'justify-center' : ''
+                            }`}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-6 h-6 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                                />
+                              </svg>
+                            </span>
+                            <span
+                              className={`${isDrawerOpen ? 'lg:hidden' : ''}`}
+                            >
+                              {category.name}
+                            </span>
+                          </RouterLink>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Disclosure.Panel>
+              </Disclosure>
+            </li>
+            <li>
+              <Disclosure>
+                <Disclosure.Button
+                  className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 w-full ${
+                    isDrawerOpen ? 'justify-center' : ''
+                  }`}
+                >
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                      />
+                    </svg>
+                  </span>
+                  <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
+                    Tags
+                  </span>
+                </Disclosure.Button>
+                <Disclosure.Panel className="text-gray-500 pl-5">
+                  <ul>
+                    {tags.data?.map((tag: Tag) => {
+                      return (
+                        <li key={tag.tagId}>
+                          <RouterLink
+                            to={`/tag/${tag.tag}`}
+                            className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
+                              isDrawerOpen ? 'justify-center' : ''
+                            }`}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-6 h-6 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                                />
+                              </svg>
+                            </span>
+                            <span
+                              className={`${isDrawerOpen ? 'lg:hidden' : ''}`}
+                            >
+                              {tag.tag}
+                            </span>
+                          </RouterLink>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Disclosure.Panel>
+              </Disclosure>
             </li>
           </ul>
         </nav>

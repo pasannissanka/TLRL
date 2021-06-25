@@ -11,8 +11,9 @@ class CategoryController {
    */
   public async getAllCategories(req: Request, res: Response) {
     const user = req.user as User;
+    const include = req.query.include === 'bookmark' ? [Bookmark] : [];
 
-    const allCategories = await user.getCategory({ include: [Bookmark] });
+    const allCategories = await user.getCategory({ include: include });
 
     const grouped = groupBy(allCategories, (category) => {
       return category.parentCategoryId;
@@ -26,7 +27,6 @@ class CategoryController {
         children: grouped[node.categoryId],
       };
     });
-    console.log(a);
 
     successResponse(res, [...a]);
   }
