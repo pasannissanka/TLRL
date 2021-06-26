@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <title>TL;RL</title>
+  </head>
+  <body>
+    <div class="flex flex-col h-full bg-white">
+      <div class="grid place-items-center mx-2 sm:my-auto">
+        <div class="container mx-auto max-w-md w-96">
+          <div class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            TL;RL
+          </div>
+          <div
+            class="
+              text-center text-base
+              font-normal
+              text-gray-900
+              border-t-2
+              pt-3
+            "
+          >
+            Sign in to your account
+          </div>
+          <form class="space-y-6 my-4 mx-4">
+            <div class="rounded-md shadow-sm">
+              <input
+                class="
+                  appearance-none
+                  rounded-md
+                  block
+                  w-full
+                  my-2
+                  px-3
+                  py-2
+                  border border-gray-300
+                  placeholder-gray-500
+                  text-gray-900
+                  focus:outline-none
+                  focus:ring-indigo-500
+                  focus:border-indigo-500
+                  focus:z-10
+                  sm:text-sm
+                "
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+              />
+            </div>
+            <div class="rounded-md shadow-sm">
+              <input
+                class="
+                  appearance-none
+                  rounded-md
+                  relative
+                  block
+                  w-full
+                  my-1
+                  px-3
+                  py-2
+                  border border-gray-300
+                  placeholder-gray-500
+                  text-gray-900
+                  focus:outline-none
+                  focus:ring-indigo-500
+                  focus:border-indigo-500
+                  focus:z-10
+                  sm:text-sm
+                "
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Password"
+              />
+            </div>
+            <button
+              id="login"
+              class="
+                relative
+                w-full
+                flex
+                justify-center
+                py-2
+                px-4
+                border border-transparent
+                text-sm
+                font-medium
+                rounded-md
+                text-white
+                bg-indigo-600
+                hover:bg-indigo-700
+              "
+              type="submit"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="login_popup.ts"></script>
+  </body>
+</html>

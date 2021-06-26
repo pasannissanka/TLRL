@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <title>TL;RL</title>
+  </head>
+  <body>
+    <div class="flex flex-col h-full bg-white">
+      <div class="grid place-items-center mx-2 sm:my-auto">
+        <div class="container mx-auto max-w-md w-96">
+          <div
+            class="
+              mt-6
+              mx-4
+              mb-2
+              text-left text-3xl
+              font-extrabold
+              text-gray-900
+              pb-2
+            "
+          >
+            TL;RL
+          </div>
+          <div class="border-b-2"></div>
+          <form class="my-6 mx-4 space-y-6">
+            <div class="grid grid-cols-3 my-4 text-left text-base font-light">
+              <div>Category</div>
+              <div class="col-span-2">
+                <input
+                  type="text"
+                  id="category"
+                  name="category"
+                  class="
+                    px-3
+                    appearance-none
+                    rounded-md
+                    relative
+                    block
+                    w-full
+                    border border-gray-300
+                    placeholder-gray-500
+                    text-gray-900
+                    focus:outline-none
+                    focus:ring-indigo-500
+                    focus:border-indigo-500
+                    focus:z-10
+                  "
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-3 my-4 text-left text-base font-light">
+              <div>Tags</div>
+              <div class="col-span-2">
+                <input
+                  type="text"
+                  id="tag"
+                  name="tag"
+                  class="
+                    px-3
+                    appearance-none
+                    rounded-md
+                    relative
+                    block
+                    w-full
+                    border border-gray-300
+                    placeholder-gray-500
+                    text-gray-900
+                    focus:outline-none
+                    focus:ring-indigo-500
+                    focus:border-indigo-500
+                    focus:z-10
+                  "
+                />
+              </div>
+            </div>
+            <button
+              class="
+                relative
+                w-full
+                flex
+                justify-center
+                py-2
+                px-4
+                border border-transparent
+                text-sm
+                font-medium
+                rounded-md
+                text-white
+                bg-indigo-600
+                hover:bg-indigo-700
+              "
+            >
+              Save
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="bookmark_popup.ts"></script>
+  </body>
+</html>
