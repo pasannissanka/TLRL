@@ -6,6 +6,7 @@ import { Drawer } from '../../Components/Drawer';
 import { useAuthContext } from '../../context/AuthContext';
 import { getLoggedUser } from '../../Query/api';
 import { Dashboard } from './Dashboard';
+import { ArticleView } from '../ArticleView/ArticleView';
 
 interface HomeProps {}
 
@@ -42,6 +43,9 @@ export const Home = (props: HomeProps) => {
               </Route>
               <Route exact path="/readlist">
                 <div>Read List</div>
+              </Route>
+              <Route exact path="/article/:bookmarkId">
+                <ArticleView />
               </Route>
               <Route path="*">
                 <div>Not Found</div>
