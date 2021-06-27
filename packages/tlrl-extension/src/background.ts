@@ -65,6 +65,15 @@ browser.runtime.onMessage.addListener(async (data, sender) => {
     } catch (error) {
       return Promise.reject(error);
     }
+  } else if (data.message === 'createBookmark') {
+    try {
+      const status = await isLoggedIn();
+      const res = await newBookmark(data.payload, status.userInfo);
+      console.log(res);
+      return Promise.resolve(res);
+    } catch (error) {
+      Promise.reject(error);
+    }
   }
   return Promise.reject(false);
 });
@@ -76,7 +85,9 @@ async function loginUser(userInfo: any) {
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
+      'Access-Control-Allow-Origin': '*',
     },
+    mode: 'cors',
     body: JSON.stringify({
       email: userInfo.email,
       password: userInfo.password,
@@ -88,14 +99,14 @@ async function loginUser(userInfo: any) {
 async function isLoggedIn() {
   const userInfo = await browser.storage.local.get(['token', 'userId']);
   if (browser.runtime.lastError) {
-    return Promise.resolve({ status: false });
+    return Promise.resolve({ status: false, userInfo: undefined });
   }
   console.log(userInfo);
   if (userInfo.token && userInfo.userId) {
     console.log('user info', userInfo.token, userInfo.userId);
     return Promise.resolve({ status: true, userInfo: userInfo });
   }
-  return Promise.resolve({ status: false });
+  return Promise.resolve({ status: false, userInfo: undefined });
 }
 
 async function logoutUser() {
@@ -104,4 +115,19 @@ async function logoutUser() {
     return Promise.reject();
   }
   return Promise.resolve('ok');
+}
+
+async function newBookmark(data, userInfo) {
+  const response = await fetch('http://localhost:4000/bookmark/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+      'Access-Control-Allow-Origin': '*',
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+    mode: 'cors',
+    body: JSON.stringify(data),
+  });
+  return response.json();
 }

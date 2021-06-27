@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Category, LoggedUser, Tag } from '../types/types';
+import { BookmarkResponse, Category, LoggedUser, Tag } from '../types/types';
 
 export const getLoggedUser = async () => {
   const token = localStorage.getItem('token');
@@ -29,4 +29,17 @@ export const getCategories = async () => {
     config
   );
   return data.data as Category[];
+};
+
+export const getBookmarksLatest = async () => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const { data } = await axios.get(
+    'http://localhost:4000/bookmark/all',
+    config
+  );
+
+  return data.data.bookmarks as BookmarkResponse[];
 };

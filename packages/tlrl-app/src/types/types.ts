@@ -32,5 +32,22 @@ export interface Category {
   userId: string;
   createdAt: string;
   updatedAt: string;
-  children: Category[];
+  children?: Category[];
+}
+
+export interface BookmarkResponse {
+  bookmarkId?: string;
+  userId?: string;
+  title?: string;
+  subtitle?: string;
+  url?: string;
+  publication?: string;
+  pubDate?: Date;
+  readingTime: number;
+  imgUrl?: string;
+  isRead: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  Categories?: Category[];
+  Tags?: Tag[];
 }

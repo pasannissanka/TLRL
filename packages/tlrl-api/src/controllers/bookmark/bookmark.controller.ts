@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import { AppError } from '../../helpers/errors/app_error';
 import { successResponse } from '../../helpers/response/success_response';
+import Category from '../../models/category/category.model';
 import { Tag } from '../../models/tag/tag.model';
 import User from '../../models/user/user.model';
+import { BookmarkQuery } from '../../types/types';
 
 class BookmarkController {
   /**
@@ -66,7 +69,34 @@ class BookmarkController {
    */
   public async getAllBookmarks(req: Request, res: Response) {
     const user = req.user as User;
-    const bookmarks = await user.getBookmarks({ include: Tag });
+    const query = { ...req.query } as BookmarkQuery;
+
+    // sort='latest' , tag=tagName , category=categoryId
+    // limit , offset
+
+    const catQ = query.category
+      ? { categoryId: { [Op.eq]: query.category } }
+      : undefined;
+    const tagQ = query.tag
+      ? { tag: { [Op.iLike]: `%${query.tag}%` } }
+      : undefined;
+
+    const include = [
+      {
+        model: Category,
+        where: catQ,
+      },
+      {
+        model: Tag,
+        where: tagQ,
+      },
+    ];
+
+    const bookmarks = await user.getBookmarks({
+      include: include,
+      order: [['createdAt', 'DESC']],
+      limit: query.limit,
+    });
 
     successResponse(res, {
       bookmarks,

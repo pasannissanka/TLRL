@@ -9,3 +9,11 @@ export interface ReqUser {
   email: string;
   name: string;
 }
+
+export interface BookmarkQuery {
+  sort?: 'latest';
+  tag?: string;
+  category?: string;
+  limit?: number;
+  offset?: number;
+}

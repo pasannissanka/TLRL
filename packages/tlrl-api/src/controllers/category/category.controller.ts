@@ -21,14 +21,14 @@ class CategoryController {
 
     // This works for one level deep only, @todo implement recursivly
     // In begining we support only one level deep category level only! :D
-    const a = grouped['null'].map((node) => {
+    const a = grouped['null']?.map((node) => {
       return {
         ...node.get(),
         children: grouped[node.categoryId],
       };
     });
 
-    successResponse(res, [...a]);
+    successResponse(res, a);
   }
 
   /**

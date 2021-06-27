@@ -5,6 +5,7 @@ import { AppBar } from '../../Components/AppBar';
 import { Drawer } from '../../Components/Drawer';
 import { useAuthContext } from '../../context/AuthContext';
 import { getLoggedUser } from '../../Query/api';
+import { Dashboard } from './Dashboard';
 
 interface HomeProps {}
 
@@ -34,7 +35,7 @@ export const Home = (props: HomeProps) => {
           <main className="flex-1 max-h-full p-5 overflow-hidden overflow-y-scroll">
             <Switch>
               <Route exact path="/">
-                <div>Home</div>
+                <Dashboard />
               </Route>
               <Route exact path="/timeline">
                 <div>Timeline</div>
