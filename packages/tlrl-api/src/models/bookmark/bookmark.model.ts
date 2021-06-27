@@ -20,6 +20,7 @@ interface BookmarkAttributes {
   subtitle: string;
   url: string;
   publication: string;
+  faviconUrl: string;
   pubDate: Date;
   readingTime: number;
   imgUrl: string;
@@ -39,6 +40,7 @@ class Bookmark
   subtitle!: string;
   url!: string;
   publication!: string;
+  faviconUrl!: string;
   pubDate!: Date;
   readingTime!: number;
   imgUrl!: string;
@@ -95,6 +97,9 @@ Bookmark.init(
     publication: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    faviconUrl: {
+      type: DataTypes.TEXT,
     },
     pubDate: {
       type: DataTypes.DATE,

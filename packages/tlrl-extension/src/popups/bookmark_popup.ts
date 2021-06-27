@@ -1,5 +1,18 @@
 import { browser } from 'webextension-polyfill-ts';
 
+let imgUrl: string;
+const executing = browser.tabs.executeScript({
+  code: `document.querySelector('img').currentSrc`,
+});
+
+executing
+  .then((result) => {
+    imgUrl = result[0];
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 let loader = `
   <svg
   class="animate-spin -ml-1 mr-3 h-10 w-10 text-black"
@@ -36,7 +49,8 @@ document.querySelector('form').addEventListener('submit', async (event) => {
     title: tab[0].title,
     url: tab[0].url,
     publication: new URL(tab[0].url).hostname,
-    imgUrl: tab[0].favIconUrl,
+    imgUrl: imgUrl,
+    faviconUrl: tab[0].favIconUrl,
     tag,
     category,
   };

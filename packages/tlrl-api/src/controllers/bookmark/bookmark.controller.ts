@@ -21,6 +21,7 @@ class BookmarkController {
       publication: req.body.publication,
       readingTime: req.body.readingTime,
       imgUrl: req.body.imgUrl,
+      faviconUrl: req.body.faviconUrl,
       pubDate: req.body.pubDate,
       isRead: false,
     });

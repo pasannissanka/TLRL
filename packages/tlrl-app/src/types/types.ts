@@ -45,9 +45,21 @@ export interface BookmarkResponse {
   pubDate?: Date;
   readingTime: number;
   imgUrl?: string;
+  faviconUrl?: string;
   isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
   Categories?: Category[];
   Tags?: Tag[];
+}
+
+export interface ArticleReadabilityResponse {
+  title: string;
+  byline: string;
+  dir: string;
+  excerpt: string;
+  content: string;
+  textContent: string;
+  siteName: string;
+  length: string;
 }
