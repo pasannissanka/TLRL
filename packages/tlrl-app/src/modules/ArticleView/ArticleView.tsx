@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getReadabilityArticle } from '../../Query/api';
+import './Article.css';
 
 interface ArticleViewProps {}
 
@@ -24,8 +25,13 @@ export const ArticleView = (props: ArticleViewProps) => {
 
   return (
     <>
-      <h2 className="text-2xl font-bold my-4">{data?.title}</h2>
-      <div dangerouslySetInnerHTML={{ __html: data?.content! }}></div>
+      <div className="container mx-auto w-1/2 text-center">
+        <h2 className="text-2xl font-bold my-4">{data?.title}</h2>
+        <div
+          className="flex justify-center align-middle"
+          dangerouslySetInnerHTML={{ __html: data?.content! }}
+        ></div>
+      </div>
     </>
   );
 };

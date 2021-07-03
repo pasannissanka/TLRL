@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#readability-page-1 img {
+  max-width: 100%;
+  max-height: 750px;
+  vertical-align: middle;
+}
+
+#readability-page-1 figcaption {
+  @apply text-xs text-gray-600;
+}
+
+#readability-page-1 p {
+  @apply text-base text-black my-2;
+}
+
+#readability-page-1 h2 {
+  @apply text-xl text-left my-4;
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { AppBar } from '../../Components/AppBar';
 import { Drawer } from '../../Components/Drawer';
 import { useAuthContext } from '../../context/AuthContext';
@@ -15,6 +15,9 @@ export const Home = (props: HomeProps) => {
 
   const { setLoggedUser } = useAuthContext();
 
+  const location = useLocation();
+  console.log(location.pathname.match('article')?.length);
+
   const { data } = useQuery('loggedUser', getLoggedUser);
 
   const handelDrawer = () => {
@@ -26,6 +29,14 @@ export const Home = (props: HomeProps) => {
       setLoggedUser(data);
     }
   }, [data, setLoggedUser]);
+
+  useEffect(() => {
+    if (location.pathname.match('article')) {
+      setDrawerOpenState(true);
+    } else {
+      setDrawerOpenState(false);
+    }
+  }, [setDrawerOpenState, location]);
 
   return (
     <React.Fragment>
