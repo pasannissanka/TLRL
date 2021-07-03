@@ -8,7 +8,7 @@ export const catchValidationErrors = (
   next: NextFunction
 ) => {
   const errors = validationResult(req);
-  console.log(errors);
+  // console.log(errors);
   if (!errors.isEmpty()) {
     next(new AppError(`Validation Error`, 401));
   }

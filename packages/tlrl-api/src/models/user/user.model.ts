@@ -1,149 +1,66 @@
-import {
-  Association,
-  DataTypes,
-  HasManyAddAssociationMixin,
-  HasManyCountAssociationsMixin,
-  HasManyCreateAssociationMixin,
-  HasManyGetAssociationsMixin,
-  HasManyHasAssociationMixin,
-  HasManyRemoveAssociationMixin,
-  Model,
-  Optional,
-} from 'sequelize';
-import { sequelize } from '../../sequelize';
-import Bookmark from '../bookmark/bookmark.model';
-import Category from '../category/category.model';
-import { Tag } from '../tag/tag.model';
+import { hash, verify } from 'argon2';
+import { Document, model, Schema, Types } from 'mongoose';
+import { ICategory } from '../category/category.model';
 
-interface UserAttributes {
-  userId: string;
+export interface IUser extends Document {
   userName: string;
   email: string;
   firstName: string;
   lastName: string;
+  // User data
+  bookmarks: Types.ObjectId[];
+  tags: string[];
+  categories: any[];
+}
+
+export interface User extends IUser {
   password: string;
+  comparePassword(candidPassword: string): Promise<boolean>;
 }
 
-// Some attributes are optional in `User.build` and `User.create` calls
-interface UserCreationAttributes extends Optional<UserAttributes, 'userId'> {}
-
-class User
-  extends Model<UserAttributes, UserCreationAttributes>
-  implements UserAttributes
-{
-  userId!: string;
-  userName!: string;
-  email!: string;
-  firstName!: string;
-  lastName!: string;
-  password!: string;
-
-  // timestamps!
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  // https://sequelize.org/master/manual/typescript.html
-  // Since TS cannot determine model association at compile time
-  // we have to declare them here purely virtually
-  // these will not exist until `Model.init` was called.
-  public getBookmarks!: HasManyGetAssociationsMixin<Bookmark>; // Note the null assertions!
-  public addBookmark!: HasManyAddAssociationMixin<Bookmark, number>;
-  public hasBookmark!: HasManyHasAssociationMixin<Bookmark, number>;
-  public countBookmarks!: HasManyCountAssociationsMixin;
-  public createBookmark!: HasManyCreateAssociationMixin<Bookmark>;
-
-  public getTags!: HasManyGetAssociationsMixin<Tag>; // Note the null assertions!
-  public addTag!: HasManyAddAssociationMixin<Tag, number>;
-  public hasTag!: HasManyHasAssociationMixin<Tag, any>;
-  public countTags!: HasManyCountAssociationsMixin;
-  public createTag!: HasManyCreateAssociationMixin<Tag>;
-
-  public getCategory!: HasManyGetAssociationsMixin<Category>;
-  public addCategory!: HasManyAddAssociationMixin<Category, number>;
-  public hasCategory!: HasManyHasAssociationMixin<Category, any>;
-  public createCategory!: HasManyCreateAssociationMixin<Category>;
-  public countCategories!: HasManyCountAssociationsMixin;
-  public removeCategory!: HasManyRemoveAssociationMixin<Category, any>;
-
-  // You can also pre-declare possible inclusions, these will only be populated if you
-  // actively include a relation.
-  public readonly Bookmarks?: Bookmark[]; // Note this is optional since it's only populated when explicitly requested in code
-  public readonly Tags?: Tag[]; // Note this is optional since it's only populated when explicitly requested in code
-
-  public static associations: {
-    Bookmarks: Association<User, Bookmark>;
-    Tags: Association<User, Tag>;
-  };
-}
-
-User.init(
+const userSchema = new Schema<User>(
   {
-    userId: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-      allowNull: false,
-    },
     userName: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: true,
+      type: String,
+      required: true,
+      index: { unique: true, dropDups: true },
     },
     email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      type: String,
+      required: true,
+      index: { unique: true, dropDups: true },
     },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    password: { type: String, required: true },
+    bookmarks: [{ type: Types.ObjectId, ref: 'Bookmark' }],
+    tags: [{ type: String }],
+    categories: [
+      new Schema<ICategory>(
+        {
+          name: { type: String },
+          _id: { type: Types.ObjectId, ref: 'Category' },
+          parent: { type: Types.ObjectId, ref: 'Category' },
+        },
+        { id: false }
+      ),
+    ],
   },
-  {
-    sequelize,
-    tableName: 'Users',
-  }
+  { timestamps: true }
 );
 
-User.hasMany(Bookmark, {
-  sourceKey: 'userId',
-  foreignKey: 'userId',
-  as: 'Bookmarks',
+userSchema.pre<User>('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await hash(this.password);
+  }
+  next();
 });
 
-Bookmark.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'User',
-});
+userSchema.methods.comparePassword = async function (
+  this: User,
+  candidPassword: string
+) {
+  return await verify(this.password, candidPassword);
+};
 
-User.hasMany(Tag, {
-  sourceKey: 'userId',
-  foreignKey: 'userId',
-  as: 'Tags',
-});
-
-Tag.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'User',
-});
-
-User.hasMany(Category, {
-  sourceKey: 'userId',
-  foreignKey: 'userId',
-  as: 'Category',
-});
-
-Category.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'User',
-});
-
-export default User;
+export const UserModel = model<User>('User', userSchema);

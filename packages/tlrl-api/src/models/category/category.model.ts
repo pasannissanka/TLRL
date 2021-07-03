@@ -1,51 +1,34 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from '../../sequelize';
+import { Document, model, Schema, Types } from 'mongoose';
+import { UserModel } from '../user/user.model';
 
-interface CategoryAttributes {
-  categoryId: string;
+export interface ICategory {
   name: string;
-  parentCategoryId: string | undefined;
+  colorCode?: string;
+  parent?: Types.ObjectId;
+}
+export interface Category extends ICategory, Document {
   userId: string;
+  bookmarks: Types.ObjectId[];
 }
 
-interface CategoryCreationAttributes
-  extends Optional<CategoryAttributes, 'categoryId' | 'parentCategoryId'> {}
-
-class Category
-  extends Model<CategoryAttributes, CategoryCreationAttributes>
-  implements CategoryAttributes
-{
-  categoryId!: string;
-  name!: string;
-  parentCategoryId!: string;
-  userId!: string;
-
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-}
-
-Category.init(
+const schema = new Schema<Category>(
   {
-    categoryId: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-      unique: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    parentCategoryId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
-    userId: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-    },
+    name: { type: String, required: true },
+    colorCode: { type: String },
+    userId: { type: Types.ObjectId, ref: 'User', required: true },
+    parent: { type: Types.ObjectId, ref: 'Category' },
+    bookmarks: [{ type: Types.ObjectId, ref: 'Bookmark' }],
   },
-  { sequelize }
+  { timestamps: true }
 );
 
-export default Category;
+schema.pre<Category>('save', async function (next) {
+  await UserModel.findByIdAndUpdate(this.userId, {
+    $push: {
+      categories: { name: this.name, _id: this._id, parent: this.parent },
+    },
+  }).exec();
+  next();
+});
+
+export const CategoryModel = model<Category>('Category', schema);

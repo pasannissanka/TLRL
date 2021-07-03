@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import User from '../../models/user/user.model';
+import { UserModel } from '../../models/user/user.model';
 import { TokenPayload } from '../../types/types';
 import { AppError } from '../errors/app_error';
 
@@ -23,8 +23,7 @@ export async function AuthenticationMiddleware(
   } catch (error) {
     next(new AppError('Authentication Error', 401));
   }
-
-  const user = await User.findOne({ where: { userId: decoded!.user_id } });
+  const user = await UserModel.findById(decoded!._id).exec();
 
   if (!user) {
     next(new AppError('Authentication Error', 401));

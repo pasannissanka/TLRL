@@ -4,10 +4,10 @@ import { AppError } from './helpers/errors/app_error';
 import { errorHandler } from './helpers/errors/error_handler';
 import authRoute from './routes/auth.route';
 import bookmarkRoute from './routes/bookmark.route';
-import tagRoute from './routes/tag.route';
-import categoryRoute from './routes/category.route';
-import articleRoute from './routes/article.route';
-import { sequelize } from './sequelize';
+// import tagRoute from './routes/tag.route';
+// import categoryRoute from './routes/category.route';
+// import articleRoute from './routes/article.route';
+import { connect } from 'mongoose';
 
 const main = async () => {
   const app = express();
@@ -24,17 +24,18 @@ const main = async () => {
 
   // Check DB connection
   try {
-    await sequelize.authenticate();
-    console.log('DB:Postgres: Connection has been established successfully.');
+    await connect('mongodb://localhost:27017/tlrl_dev', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: true,
+    });
+    console.log('DB: MongoDB connected');
   } catch (error) {
     console.error(
-      'DB:Postgres: ERROR: Unable to connect to the database:',
+      'DB:MongoDb : ERROR: Unable to connect to the database:',
       error
     );
   }
-
-  // Sync force/alter on development only, @todo: use migrations
-  sequelize.sync({ alter: true, match: /_dev$/ });
 
   app.get('/', (_, res) => {
     res.send('Hi');
@@ -43,9 +44,9 @@ const main = async () => {
   // Routes
   app.use('/auth', authRoute);
   app.use('/bookmark', bookmarkRoute);
-  app.use('/tag', tagRoute);
-  app.use('/category', categoryRoute);
-  app.use('/article', articleRoute);
+  // app.use('/tag', tagRoute);
+  // app.use('/category', categoryRoute);
+  // app.use('/article', articleRoute);
 
   // Catch All Unhandled routes
   app.all('*', (req, _, next) => {

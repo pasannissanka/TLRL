@@ -36,6 +36,7 @@
     "jsdom": "^16.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.groupby": "^4.6.0",
+    "mongoose": "^5.13.1",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
     "sanitize-html": "^2.4.0",

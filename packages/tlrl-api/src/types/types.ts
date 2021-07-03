@@ -1,10 +1,12 @@
+import { Types } from 'mongoose';
+
 export interface TokenPayload {
-  user_id: string;
+  _id: Types.ObjectId;
   email: string;
 }
 
 export interface ReqUser {
-  userId: string;
+  userId: Types.ObjectId;
   userName: string;
   email: string;
   name: string;
