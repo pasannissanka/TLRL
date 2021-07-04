@@ -49,15 +49,27 @@ const schema = new Schema<IBookmark>(
   { timestamps: true }
 );
 
+schema.index({ title: 'text', url: 'text' });
+
 schema.pre<IBookmark>('save', async function (next) {
-  await UserModel.findByIdAndUpdate(this.userId, {
-    $push: { bookmarks: this._id },
-    $addToSet: { tags: { $each: this.tags } },
-  }).exec();
-  await CategoryModel.findByIdAndUpdate(this.category, {
-    $addToSet: { bookmarks: this._id },
-  }).exec();
+  if (this.isModified('tags')) {
+    await UserModel.findByIdAndUpdate(this.userId, {
+      $push: { bookmarks: this._id },
+      $addToSet: { tags: { $each: this.tags } },
+    }).exec();
+  }
+  if (this.isModified('category')) {
+    await CategoryModel.findByIdAndUpdate(this.category, {
+      $addToSet: { bookmarks: this._id },
+    }).exec();
+  }
   next();
 });
 
 export const BookmarkModel = model<IBookmark>('Bookmark', schema);
+
+// BookmarkModel.collection.dropIndexes(function () {
+//   BookmarkModel.collection.reIndex(function () {
+//     console.log('Done');
+//   });
+// });

@@ -9,6 +9,7 @@ export interface ICategory {
 export interface Category extends ICategory, Document {
   userId: string;
   bookmarks: Types.ObjectId[];
+  children: Types.ObjectId[];
 }
 
 const schema = new Schema<Category>(
@@ -17,6 +18,7 @@ const schema = new Schema<Category>(
     colorCode: { type: String },
     userId: { type: Types.ObjectId, ref: 'User', required: true },
     parent: { type: Types.ObjectId, ref: 'Category' },
+    children: [{ type: Types.ObjectId, ref: 'Category' }],
     bookmarks: [{ type: Types.ObjectId, ref: 'Bookmark' }],
   },
   { timestamps: true }
@@ -28,6 +30,13 @@ schema.pre<Category>('save', async function (next) {
       categories: { name: this.name, _id: this._id, parent: this.parent },
     },
   }).exec();
+  if (this.isModified('parent')) {
+    await CategoryModel.findByIdAndUpdate(this.parent, {
+      $push: {
+        children: this._id,
+      },
+    }).exec();
+  }
   next();
 });
 

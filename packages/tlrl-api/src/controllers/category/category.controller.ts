@@ -1,66 +1,87 @@
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
+import { AppError } from '../../helpers/errors/app_error';
 import { successResponse } from '../../helpers/response/success_response';
-// import groupBy from 'lodash.groupby';
-// import { AppError } from '../../helpers/errors/app_error';
+import { CategoryModel } from '../../models/category/category.model';
+import { IUser } from '../../models/user/user.model';
+import { categoryAggregateQuery } from './category.aggregate';
 
 class CategoryController {
   /**
    * getAllCategories
    */
   public async getAllCategories(req: Request, res: Response) {
-    // const user = req.user as User;
-    // const include = req.query.include === 'bookmark' ? [Bookmark] : [];
+    const user = req.user as IUser;
 
-    // const allCategories = await user.getCategory({ include: include });
+    const categoryGraph = await CategoryModel.aggregate(
+      categoryAggregateQuery(user._id)
+    ).exec();
 
-    // const grouped = groupBy(allCategories, (category) => {
-    //   return category.parentCategoryId;
-    // });
-
-    // // This works for one level deep only, @todo implement recursivly
-    // // In begining we support only one level deep category level only! :D
-    // const a = grouped['null']?.map((node) => {
-    //   return {
-    //     ...node.get(),
-    //     children: grouped[node.categoryId],
-    //   };
-    // });
-
-    // successResponse(res, a);
-    res.json({ message: 'NOT IMPLEMENTED' });
+    successResponse(res, {
+      categories: categoryGraph,
+    });
   }
 
   /**
    * createCategory
    */
   public async createCategory(req: Request, res: Response) {
-    // const user = req.user as User;
-    // const parentCategoryId = req.body.parent ? req.body.parent : undefined;
+    const user = req.user as IUser;
 
-    // const category = await user.createCategory({
-    //   name: req.body.name,
-    //   userId: user.userId,
-    //   parentCategoryId: parentCategoryId,
-    // });
+    const reqData = req.body;
 
-    // successResponse(res, {
-    //   category,
-    // });
-    res.json({ message: 'NOT IMPLEMENTED' });
+    if (user.categories.some((cat) => cat.name === reqData.name)) {
+      throw new AppError('Category Already Exists', 401);
+    }
+
+    if (reqData.parent) {
+      if (
+        user.categories.some(
+          (cat) => cat._id === Types.ObjectId(reqData.parent)
+        )
+      ) {
+        throw new AppError('Invalid Parent Category', 401);
+      }
+    }
+
+    const category = new CategoryModel({
+      name: reqData.name,
+      colorCode: reqData.colorCode,
+      userId: user._id,
+      parent: Types.ObjectId(reqData.parent),
+    });
+
+    await category.save();
+
+    successResponse(res, {
+      category,
+    });
   }
 
   /**
    * getCategory
    */
   public async getCategory(req: Request, res: Response) {
-    // const user = req.user as User;
+    const user = req.user as IUser;
 
-    // const category = await user.getCategory({
-    //   where: { categoryId: req.params.categoryId },
-    //   include: [Bookmark],
-    // });
-    // successResponse(res, { category });
-    res.json({ message: 'NOT IMPLEMENTED' });
+    const category = await CategoryModel.aggregate([
+      {
+        $match: {
+          userId: Types.ObjectId(user._id),
+          _id: Types.ObjectId(req.params.categoryId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'children',
+          foreignField: '_id',
+          as: 'children',
+        },
+      },
+    ]);
+
+    successResponse(res, { category });
   }
 
   /**
@@ -73,32 +94,19 @@ class CategoryController {
   /**
    * addBookmarkToCategory
    */
-  public async addBookmarkToCategory(req: Request, res: Response) {
-    // This executes 4+ queries, @todo refactor later
+  public async addBookmarkToCategory(_: Request, res: Response) {
+    // const user = req.user as IUser;
 
-    // const user = req.user as User;
-    // const bookmark = await user.getBookmarks({
-    //   where: { bookmarkId: req.query.bookmarkId },
-    // });
-
-    // const category = await user.getCategory({
-    //   where: { categoryId: req.params.categoryId },
-    // });
-
-    // if (!bookmark || bookmark.length === 0) {
+    // const bookmarkId = Types.ObjectId(req.query.bookmarkId as string);
+    // if (!user.bookmarks.includes(bookmarkId)) {
     //   throw new AppError('Bookmark not found', 404);
     // }
 
-    // if (!category || category.length === 0) {
-    //   throw new AppError('Category not found', 404);
-    // }
-
-    // await bookmark[0].addCategory(category[0]);
-
-    // const categoryUpdated = await user.getCategory({
-    //   where: { categoryId: req.params.categoryId },
-    //   include: [Bookmark],
-    // });
+    // const updatedBookmark = await BookmarkModel.findByIdAndUpdate(bookmarkId, {
+    //   $push: {
+    //     category:
+    //   }
+    // })
 
     // successResponse(res, { category: categoryUpdated });
     res.json({ message: 'NOT IMPLEMENTED' });
@@ -107,31 +115,7 @@ class CategoryController {
   /**
    * removeBookmarkFromCategory
    */
-  public async removeBookmarkFromCategory(req: Request, res: Response) {
-    // const user = req.user as User;
-    // const bookmark = await user.getBookmarks({
-    //   where: { bookmarkId: req.query.bookmarkId },
-    // });
-
-    // const category = await user.getCategory({
-    //   where: { categoryId: req.params.categoryId },
-    // });
-
-    // if (!bookmark || bookmark.length === 0) {
-    //   throw new AppError('Bookmark not found', 404);
-    // }
-
-    // if (!category || category.length === 0) {
-    //   throw new AppError('Category not found', 404);
-    // }
-
-    // await bookmark[0].removeCategory(category[0]);
-
-    // const categoryUpdated = await user.getCategory({
-    //   where: { categoryId: req.params.categoryId },
-    //   include: [Bookmark],
-    // });
-    // successResponse(res, { category: categoryUpdated });
+  public async removeBookmarkFromCategory(_: Request, res: Response) {
     res.json({ message: 'NOT IMPLEMENTED' });
   }
 

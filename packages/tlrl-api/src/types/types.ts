@@ -16,6 +16,7 @@ export interface BookmarkQuery {
   sort?: 'latest';
   tag?: string;
   category?: string;
-  limit?: number;
+  limit: number;
   offset?: number;
+  searchq?: string;
 }

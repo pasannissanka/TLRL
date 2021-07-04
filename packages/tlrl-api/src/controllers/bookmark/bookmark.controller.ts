@@ -5,7 +5,6 @@ import { successResponse } from '../../helpers/response/success_response';
 import { BookmarkModel } from '../../models/bookmark/bookmark.model';
 import { CategoryModel, ICategory } from '../../models/category/category.model';
 import { IUser } from '../../models/user/user.model';
-import { BookmarkQuery } from '../../types/types';
 
 class BookmarkController {
   /**
@@ -48,7 +47,7 @@ class BookmarkController {
 
       const category = await CategoryModel.findById(req.body.categoryId).exec();
       if (!category) {
-        throw new AppError('Invalid Category Id', 401);
+        throw new AppError('Invalid Category Id 2', 401);
       }
 
       categoryData = {
@@ -108,65 +107,60 @@ class BookmarkController {
    * getAllBookmarks
    */
   public async getAllBookmarks(req: Request, res: Response) {
-    // const user = req.user as User;
-    // const query = { ...req.query } as BookmarkQuery;
+    const user = req.user as IUser;
 
-    // // sort='latest' , tag=tagName , category=categoryId
-    // // limit , offset
+    const searchby = req.query.search as string;
 
-    // const catQ = query.category
-    //   ? { categoryId: { [Op.eq]: query.category } }
-    //   : undefined;
-    // const tagQ = query.tag
-    //   ? { tag: { [Op.iLike]: `%${query.tag}%` } }
-    //   : undefined;
+    const queryOptions = {
+      limit: parseInt(req.query.limit as string, 10) || 10,
+      offset: parseInt(req.query.offset as string, 10) || 0,
+    };
 
-    // const include = [
-    //   {
-    //     model: Category,
-    //     where: catQ,
-    //   },
-    //   {
-    //     model: Tag,
-    //     where: tagQ,
-    //   },
-    // ];
+    // TODO get count, implement an aggregation
+    const bookmarks = await BookmarkModel.find(
+      {
+        userId: user._id,
+        isDeleted: false,
+        $text: { $search: searchby },
+      },
+      null,
+      { limit: queryOptions.limit, skip: queryOptions.offset }
+    ).exec();
 
-    // const bookmarks = await user.getBookmarks({
-    //   include: include,
-    //   order: [['createdAt', 'DESC']],
-    //   limit: query.limit,
-    // });
+    const count = await BookmarkModel.countDocuments({
+      userId: user._id,
+      isDeleted: false,
+      $text: { $search: searchby },
+    }).exec();
 
-    // successResponse(res, {
-    //   bookmarks,
-    // });
-    res.json({ message: 'NOT IMPLEMENTED' });
+    successResponse(res, {
+      bookmarks,
+      count,
+    });
   }
 
   /**
    * markAsReadBookmark
    */
   public async markAsReadBookmark(req: Request, res: Response) {
-    // const user = req.user as User;
-    // const bookmark = await user
-    //   .getBookmarks({
-    //     where: {
-    //       bookmarkId: req.params.bookmarkId,
-    //     },
-    //   })
-    //   .then(async (bookmarks) => {
-    //     if (!bookmarks || bookmarks.length === 0) {
-    //       throw new AppError('Bookmark Not found', 404);
-    //     }
-    //     const result = await bookmarks[0].update({ isRead: true });
-    //     return result;
-    //   });
+    const user = req.user as IUser;
+    const bookmarkId = Types.ObjectId(req.params.bookmarkId as string);
 
-    // successResponse(res, {
-    //   bookmark,
-    // });
-    res.json({ message: 'NOT IMPLEMENTED' });
+    if (!user.bookmarks.includes(bookmarkId)) {
+      throw new AppError('Bookmark not found', 404);
+    }
+
+    const bookmark = await BookmarkModel.findByIdAndUpdate(
+      bookmarkId,
+      {
+        $set: { isRead: true },
+      },
+      { new: true }
+    );
+
+    successResponse(res, {
+      bookmark,
+    });
   }
 
   /**
@@ -180,22 +174,24 @@ class BookmarkController {
    * deleteBookmark
    */
   public async deleteBookmark(req: Request, res: Response) {
-    // const user = req.user as User;
-    // await user
-    //   .getBookmarks({
-    //     where: {
-    //       bookmarkId: req.params.bookmarkId,
-    //     },
-    //   })
-    //   .then(async (bookmarks) => {
-    //     if (!bookmarks || bookmarks.length === 0) {
-    //       throw new AppError('Bookmark Not found', 404);
-    //     }
-    //     await bookmarks[0].destroy();
-    //   });
+    const user = req.user as IUser;
+    const bookmarkId = Types.ObjectId(req.params.bookmarkId as string);
 
-    // successResponse(res, {});
-    res.json({ message: 'NOT IMPLEMENTED' });
+    if (!user.bookmarks.includes(bookmarkId)) {
+      throw new AppError('Bookmark not found', 404);
+    }
+
+    const bookmark = await BookmarkModel.findByIdAndUpdate(
+      bookmarkId,
+      {
+        $set: { isDeleted: true },
+      },
+      { new: true }
+    );
+
+    successResponse(res, {
+      bookmark,
+    });
   }
 }
 

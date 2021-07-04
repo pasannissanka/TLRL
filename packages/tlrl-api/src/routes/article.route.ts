@@ -9,7 +9,7 @@ const router = Router();
 
 router.get('/:bookmarkId', [
   AuthenticationMiddleware,
-  param('bookmarkId').isUUID(),
+  param('bookmarkId').isMongoId(),
   catchValidationErrors,
   catchAsync(articleController.getReadabilityArticle),
 ]);
