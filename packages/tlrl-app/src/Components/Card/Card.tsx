@@ -1,18 +1,18 @@
 import React from 'react';
-import { BookmarkResponse } from '../../types/types';
+import { Bookmark } from '../../types/types';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
 
 interface CardProps {
-  key: number;
-  cardData: BookmarkResponse;
+  key: string;
+  cardData: Bookmark;
 }
 
 export const Card = ({ cardData }: CardProps) => {
   return (
     <div className="mx-auto px-4 py-8 max-w-xl my-1">
       <div className="bg-white shadow-md rounded-lg mb-2 tracking-wide h-80 hover:shadow-lg">
-        <Link to={`/article/${cardData.bookmarkId}`}>
+        <Link to={`/article/${cardData._id}`}>
           <div className="md:flex-shrink-0">
             <img
               src={cardData.imgUrl}
@@ -36,7 +36,7 @@ export const Card = ({ cardData }: CardProps) => {
               <div className="user-logo">
                 <img
                   className="w-6 h-6 object-cover rounded-full mx-2 shadow"
-                  src={cardData.faviconUrl}
+                  src={cardData.publication.faviconUrl}
                   alt="favicon"
                 />
               </div>
@@ -44,9 +44,9 @@ export const Card = ({ cardData }: CardProps) => {
                 {/* <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`https://${cardData.publication}`}
+                  href={`https://${cardData.publication.hostname}`}
                 > */}
-                {cardData.publication}
+                {cardData.publication.hostname}
                 {/* </a> */}
                 <span className="text-xs text-gray-600 ml-1">
                   {format(cardData.createdAt)}

@@ -16,7 +16,6 @@ export const Home = (props: HomeProps) => {
   const { setLoggedUser } = useAuthContext();
 
   const location = useLocation();
-  console.log(location.pathname.match('article')?.length);
 
   const { data } = useQuery('loggedUser', getLoggedUser);
 
@@ -40,10 +39,11 @@ export const Home = (props: HomeProps) => {
 
   return (
     <React.Fragment>
-      <div className="flex h-screen overflow-y-hidden bg-gray-50">
-        <Drawer isDrawerOpen={isDrawerOpen} />
-        <div className="flex flex-col flex-1 h-full overflow-hidden">
-          <AppBar isDrawerOpen={isDrawerOpen} handleDrawerOpen={handelDrawer} />
+      <div className="overflow-y-hidden h-screen bg-gray-50">
+        <AppBar isDrawerOpen={isDrawerOpen} handleDrawerOpen={handelDrawer} />
+
+        <div className="flex flex-1 h-full overflow-hidden">
+          <Drawer isDrawerOpen={isDrawerOpen} />
           <main className="flex-1 max-h-full p-5 overflow-hidden overflow-y-scroll">
             <Switch>
               <Route exact path="/">

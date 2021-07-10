@@ -25,32 +25,39 @@ export interface Tag {
   updatedAt: string;
 }
 
-export interface Category {
-  categoryId: string;
-  name: string;
-  parentCategoryId: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  children?: Category[];
-}
-
-export interface BookmarkResponse {
-  bookmarkId?: string;
-  userId?: string;
-  title?: string;
-  subtitle?: string;
-  url?: string;
-  publication?: string;
-  pubDate?: Date;
-  readingTime: number;
-  imgUrl?: string;
-  faviconUrl?: string;
-  isRead: boolean;
+export interface MongoDocument {
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
-  Categories?: Category[];
-  Tags?: Tag[];
+  isDeleted: boolean;
+}
+
+export interface Category extends MongoDocument {
+  name: string;
+  parent: string;
+  children: Category[];
+  bookmarks: string[];
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  level: number;
+}
+
+export interface Publication {
+  faviconUrl: string;
+  hostname: string;
+}
+export interface Bookmark extends MongoDocument {
+  userId: string;
+  title: string;
+  url: string;
+  publication: Publication;
+  pubDate: Date;
+  readingTime: number;
+  imgUrl: string;
+  tags: string[];
+  isRead: boolean;
+  category: Category;
 }
 
 export interface ArticleReadabilityResponse {

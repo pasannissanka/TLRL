@@ -25,13 +25,13 @@ export const ArticleView = (props: ArticleViewProps) => {
 
   return (
     <>
-      <div className="container mx-auto w-1/2 text-center">
+      {/* <div className="container mx-auto w-1/2 text-center">
         <h2 className="text-2xl font-bold my-4">{data?.title}</h2>
         <div
           className="flex justify-center align-middle"
           dangerouslySetInnerHTML={{ __html: data?.content! }}
         ></div>
-      </div>
+      </div> */}
     </>
   );
 };

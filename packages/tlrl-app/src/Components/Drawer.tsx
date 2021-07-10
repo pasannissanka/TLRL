@@ -1,9 +1,10 @@
+import { Disclosure } from '@headlessui/react';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { getCategories, getTags } from '../Query/api';
-import { Disclosure } from '@headlessui/react';
-import { Category, Tag } from '../types/types';
+import { Category } from '../types/types';
+import { DrawerTree } from './DrawerTree';
 
 interface DrawerProps {
   isDrawerOpen: boolean;
@@ -16,7 +17,7 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
   return (
     <React.Fragment>
       <aside
-        className={`fixed inset-y-0 z-10 flex flex-col flex-shrink-0 w-64 max-h-screen overflow-hidden transition-all transform bg-gray-200 border-r shadow-lg lg:z-auto lg:static lg:shadow-none
+        className={`fixed inset-y-0 z-10 flex flex-col flex-shrink-0 w-64 max-h-screen overflow-hidden transition-all transform shadow-lg lg:z-auto lg:static lg:shadow-none
 				${isDrawerOpen ? '-translate-x-full lg:translate-x-0 lg:w-0' : ''}`}
       >
         {/* Header */}
@@ -25,9 +26,9 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
             isDrawerOpen ? 'lg:justify-center' : ''
           }`}
         >
-          <span className="p-2 text-xl font-semibold leading-8 tracking-wider uppercase whitespace-nowrap">
+          {/* <span className="p-2 text-xl font-semibold leading-8 tracking-wider uppercase whitespace-nowrap">
             TL;RL
-          </span>
+          </span> */}
         </div>
         <nav className="flex-1 overflow-hidden hover:overflow-y-auto">
           <ul className="p-2 overflow-hidden">
@@ -118,14 +119,35 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
             <li>
               <Disclosure>
                 <Disclosure.Button
-                  className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 w-full ${
+                  className={`flex items-center p-2 space-x-2 justify-between rounded-md hover:bg-gray-100 w-full ${
                     isDrawerOpen ? 'justify-center' : ''
                   }`}
                 >
+                  <div className="flex flex-row space-x-2">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                        />
+                      </svg>
+                    </span>
+                    <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
+                      Categories
+                    </span>
+                  </div>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-6 text-gray-400"
+                      className="w-4 h-4 text-gray-400 flex-1"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -134,50 +156,14 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                        d="M19 9l-7 7-7-7"
                       />
                     </svg>
-                  </span>
-                  <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
-                    Categories
                   </span>
                 </Disclosure.Button>
                 <Disclosure.Panel className="text-gray-500 pl-5">
                   <ul>
-                    {categories.data?.map((category: Category) => {
-                      return (
-                        <li key={category.categoryId}>
-                          <RouterLink
-                            to={`/category/${category.categoryId}`}
-                            className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
-                              isDrawerOpen ? 'justify-center' : ''
-                            }`}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 text-gray-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                                />
-                              </svg>
-                            </span>
-                            <span
-                              className={`${isDrawerOpen ? 'lg:hidden' : ''}`}
-                            >
-                              {category.name}
-                            </span>
-                          </RouterLink>
-                        </li>
-                      );
-                    })}
+                    <DrawerTree categories={categories.data!} />
                   </ul>
                 </Disclosure.Panel>
               </Disclosure>
@@ -185,14 +171,35 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
             <li>
               <Disclosure>
                 <Disclosure.Button
-                  className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 w-full ${
+                  className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 w-full justify-between ${
                     isDrawerOpen ? 'justify-center' : ''
                   }`}
                 >
+                  <div className="flex flex-row space-x-2">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                        />
+                      </svg>
+                    </span>
+                    <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
+                      Tags
+                    </span>
+                  </div>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-6 text-gray-400"
+                      className="w-4 h-4 text-gray-400 flex-1"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -201,21 +208,18 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                        d="M19 9l-7 7-7-7"
                       />
                     </svg>
-                  </span>
-                  <span className={`${isDrawerOpen ? 'lg:hidden' : ''}`}>
-                    Tags
                   </span>
                 </Disclosure.Button>
                 <Disclosure.Panel className="text-gray-500 pl-5">
                   <ul>
-                    {tags.data?.map((tag: Tag) => {
+                    {tags.data?.map((tag: string, index) => {
                       return (
-                        <li key={tag.tagId}>
+                        <li key={index}>
                           <RouterLink
-                            to={`/tag/${tag.tag}`}
+                            to={`/tag/${tag}`}
                             className={`flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100 ${
                               isDrawerOpen ? 'justify-center' : ''
                             }`}
@@ -239,7 +243,7 @@ export const Drawer = ({ isDrawerOpen }: DrawerProps) => {
                             <span
                               className={`${isDrawerOpen ? 'lg:hidden' : ''}`}
                             >
-                              {tag.tag}
+                              {tag}
                             </span>
                           </RouterLink>
                         </li>

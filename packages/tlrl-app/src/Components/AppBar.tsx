@@ -105,7 +105,7 @@ export const AppBar = ({ handleDrawerOpen, isDrawerOpen }: AppBarProps) => {
             <></>
           )} */}
 
-          <div className="items-center hidden px-2 space-x-2 md:flex-1 md:flex md:mr-auto md:ml-5">
+          <div className="items-center hidden justify-center px-2 space-x-2 md:flex-1 md:flex md:mr-auto md:ml-5">
             <span>
               <svg
                 className="w-5 h-5 text-gray-500"
@@ -125,7 +125,7 @@ export const AppBar = ({ handleDrawerOpen, isDrawerOpen }: AppBarProps) => {
             <input
               type="text"
               placeholder="Search"
-              className="px-4 py-3 rounded-md hover:bg-gray-100 lg:max-w-sm md:py-2 md:flex-1 focus:outline-none md:focus:bg-gray-100 md:focus:shadow md:focus:border"
+              className="px-4 py-3 rounded-md hover:bg-white lg:max-w-sm md:py-2 md:flex-1 focus:outline-none md:focus:bg-white md:focus:shadow md:focus:border"
             />
           </div>
 

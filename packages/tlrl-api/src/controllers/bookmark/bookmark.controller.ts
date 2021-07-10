@@ -109,7 +109,21 @@ class BookmarkController {
   public async getAllBookmarks(req: Request, res: Response) {
     const user = req.user as IUser;
 
-    const searchby = req.query.search as string;
+    const searchby = req.query?.search as string;
+
+    let query = {
+      userId: user._id,
+      isDeleted: false,
+    } as any;
+
+    if (searchby) {
+      query = {
+        ...query,
+        $text: { $search: searchby },
+      };
+    }
+
+    console.log(query, searchby);
 
     const queryOptions = {
       limit: parseInt(req.query.limit as string, 10) || 10,
@@ -117,21 +131,12 @@ class BookmarkController {
     };
 
     // TODO get count, implement an aggregation
-    const bookmarks = await BookmarkModel.find(
-      {
-        userId: user._id,
-        isDeleted: false,
-        $text: { $search: searchby },
-      },
-      null,
-      { limit: queryOptions.limit, skip: queryOptions.offset }
-    ).exec();
-
-    const count = await BookmarkModel.countDocuments({
-      userId: user._id,
-      isDeleted: false,
-      $text: { $search: searchby },
+    const bookmarks = await BookmarkModel.find(query, null, {
+      limit: queryOptions.limit,
+      skip: queryOptions.offset,
     }).exec();
+
+    const count = await BookmarkModel.countDocuments(query).exec();
 
     successResponse(res, {
       bookmarks,
