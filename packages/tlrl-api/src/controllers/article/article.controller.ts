@@ -43,6 +43,7 @@ class ArticleController {
     // const clean = sanitizeHtml(article?.content!);
 
     successResponse(res, {
+      bookmark: bookmark,
       title: article?.title,
       byline: article?.byline,
       dir: article?.dir,

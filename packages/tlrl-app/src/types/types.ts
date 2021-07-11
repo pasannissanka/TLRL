@@ -61,6 +61,7 @@ export interface Bookmark extends MongoDocument {
 }
 
 export interface ArticleReadabilityResponse {
+  bookmark: Bookmark;
   title: string;
   byline: string;
   dir: string;

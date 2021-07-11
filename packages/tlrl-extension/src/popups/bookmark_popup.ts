@@ -48,11 +48,10 @@ document.querySelector('form').addEventListener('submit', async (event) => {
   const bookmark = {
     title: tab[0].title,
     url: tab[0].url,
-    publication: new URL(tab[0].url).hostname,
+    hostname: new URL(tab[0].url).hostname,
     imgUrl: imgUrl,
     faviconUrl: tab[0].favIconUrl,
-    tag,
-    category,
+    tags: [tag],
   };
 
   console.log(bookmark);

@@ -13,11 +13,22 @@ interface RouteParams {
 export const ArticleView = (props: ArticleViewProps) => {
   const { bookmarkId } = useParams<RouteParams>();
 
-  const { isLoading, data } = useQuery(['readabilityArticle', bookmarkId], () =>
-    getReadabilityArticle(bookmarkId)
+  const { isIdle, isLoading, data, refetch } = useQuery(
+    ['readabilityArticle', bookmarkId],
+    () => {
+      return getReadabilityArticle(bookmarkId);
+    },
+    {
+      enabled: false,
+    }
   );
 
   console.log(bookmarkId);
+
+  if (isIdle) {
+    refetch();
+    return <div>Loading...</div>;
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -25,13 +36,13 @@ export const ArticleView = (props: ArticleViewProps) => {
 
   return (
     <>
-      {/* <div className="container mx-auto w-1/2 text-center">
+      <div className="container mx-auto w-1/2 text-center mb-28">
         <h2 className="text-2xl font-bold my-4">{data?.title}</h2>
         <div
           className="flex justify-center align-middle"
-          dangerouslySetInnerHTML={{ __html: data?.content! }}
+          dangerouslySetInnerHTML={{ __html: data!.content }}
         ></div>
-      </div> */}
+      </div>
     </>
   );
 };

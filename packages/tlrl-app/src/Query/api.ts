@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { Bookmark, Category, LoggedUser } from '../types/types';
+import {
+  ArticleReadabilityResponse,
+  Bookmark,
+  Category,
+  LoggedUser,
+} from '../types/types';
 
 export const getLoggedUser = async () => {
   const token = localStorage.getItem('token');
@@ -45,14 +50,14 @@ export const getBookmarksLatest = async () => {
 };
 
 export const getReadabilityArticle = async (bookmarkId: string) => {
-  // const token = localStorage.getItem('token');
-  // const config = {
-  //   headers: { Authorization: `Bearer ${token}` },
-  // };
-  // const { data } = await axios.get(
-  //   `http://localhost:4000/article/${bookmarkId}`,
-  //   config
-  // );
-  // return data.data as ArticleReadabilityResponse;
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const { data } = await axios.get(
+    `http://localhost:4000/article/${bookmarkId}`,
+    config
+  );
+  return data.data as ArticleReadabilityResponse;
   return null;
 };
