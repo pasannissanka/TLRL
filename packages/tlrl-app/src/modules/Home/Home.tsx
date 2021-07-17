@@ -41,7 +41,6 @@ export const Home = (props: HomeProps) => {
     <React.Fragment>
       <div className="overflow-y-hidden h-screen bg-gray-50">
         <AppBar isDrawerOpen={isDrawerOpen} handleDrawerOpen={handelDrawer} />
-
         <div className="flex flex-1 h-full overflow-hidden">
           <Drawer isDrawerOpen={isDrawerOpen} />
           <main className="flex-1 max-h-full p-5 overflow-hidden overflow-y-scroll">

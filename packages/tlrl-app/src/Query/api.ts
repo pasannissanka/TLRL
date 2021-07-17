@@ -59,5 +59,4 @@ export const getReadabilityArticle = async (bookmarkId: string) => {
     config
   );
   return data.data as ArticleReadabilityResponse;
-  return null;
 };

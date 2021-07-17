@@ -17,6 +17,12 @@ export interface LoggedUser {
   name?: string;
 }
 
+export interface DrawerTreeItem<T> {
+  _id: string;
+  children: DrawerTreeItem<T>[];
+  name: string;
+}
+
 export interface Tag {
   tagId: string;
   tag: string;

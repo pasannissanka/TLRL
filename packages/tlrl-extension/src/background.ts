@@ -1,32 +1,15 @@
 // eslint-disable-next-line import/no-unassigned-import
-// import './options-storage';
 // Don't forget to import this wherever you use it
 import { browser } from 'webextension-polyfill-ts';
 
-// browser.browserAction.onClicked.addListener(async (tab, info) => {
-//   try {
-//     const userStatus = await isLoggedIn();
-//     if (userStatus.status) {
-//       return browser.windows.create({
-//         url: '/browser_action/bookmark_popup.html',
-//         width: 300,
-//         height: 600,
-//         focused: true,
-//       });
-//     } else {
-//       return browser.windows.create({
-//         url: '/browser_action/login_popup.html',
-//         width: 300,
-//         height: 600,
-//         focused: true,
-//       });
-//     }
-//   } catch (error) {
-//     return error;
-//   }
-// });
+const handleTabOnActivated = async (activeInfo) => {
+  console.log(await browser.tabs.get(activeInfo));
+  console.log(activeInfo);
+};
 
-browser.runtime.onMessage.addListener(async (data, sender) => {
+browser.tabs.onUpdated.addListener(handleTabOnActivated);
+
+browser.runtime.onMessage.addListener(async (data, _) => {
   console.log(data);
   if (data.message === 'login') {
     try {
@@ -121,7 +104,6 @@ async function newBookmark(data, userInfo) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // 'Content-Type': 'application/x-www-form-urlencoded',
       'Access-Control-Allow-Origin': '*',
       Authorization: `Bearer ${userInfo.token}`,
     },
